@@ -1,12 +1,12 @@
 // @TODO: YOUR CODE HERE!
 
-var svgWidth = 960;
-var svgHeight = 500;
+var svgWidth = 800;
+var svgHeight = 600;
 
 var margin = {
   top: 20,
   right: 40,
-  bottom: 80,
+  bottom: 100,
   left: 100
 };
 
@@ -33,8 +33,8 @@ var chosenYAxis = "obesity";
 function xScale(healthData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(healthData, d => d[chosenXAxis]) * 0.8,
-      d3.max(healthData, d => d[chosenXAxis]) * 1.2
+    .domain([d3.min(healthData, d => d[chosenXAxis]) * .9,
+      d3.max(healthData, d => d[chosenXAxis]) * 1.1
     ])
     .range([0, width]);
 
@@ -45,8 +45,8 @@ function xScale(healthData, chosenXAxis) {
 function yScale(healthData, chosenYAxis) {
   // create scales
   var yLinearScale = d3.scaleLinear()
-    .domain([d3.min(healthData, d => d[chosenYAxis]) * 0.8,
-      d3.max(healthData, d => d[chosenYAxis]) * 1.2
+    .domain([d3.min(healthData, d => d[chosenYAxis]) * .9,
+      d3.max(healthData, d => d[chosenYAxis]) * 1.1
     ])
     .range([height, 0]);
 
@@ -210,28 +210,31 @@ d3.csv("./assets/data/data.csv").then(function(healthData, err) {
 
   // Create group for multiple y-axis labels
   var yLabelsGroup = chartGroup.append("g")
-    .attr("transform", `translate(${height / 2}, ${width - 20})`);
+    .attr("transform", `translate(-20, ${height / 2})`);
 
   // Create first y label
   var obesityLabel = yLabelsGroup.append("text")
-    .attr("x", -60)
-    .attr("y", 0)
+    .attr("x", 0)
+    .attr("y", -60)
+    .attr("transform", "rotate(-90)")
     .attr("value", "obesity") // value to grab for event listener
     .classed("active", true)
     .text("Obese (%)");
 
   // Create second y label
   var smokesLabel = yLabelsGroup.append("text")
-    .attr("x", -40)
-    .attr("y", 0)
+    .attr("x", 0)
+    .attr("y", -40)
+    .attr("transform", "rotate(-90)")
     .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
     .text("Smokes (%)");
 
   // Create third y label
   var healthcareLabel = yLabelsGroup.append("text")
-    .attr("x", -20)
-    .attr("y", 0)
+    .attr("x", 0)
+    .attr("y", -20)
+    .attr("transform", "rotate(-90)")
     .attr("value", "healthcare") // value to grab for event listener
     .classed("inactive", true)
     .text("Lacks Healthcare (%)");
@@ -306,21 +309,21 @@ d3.csv("./assets/data/data.csv").then(function(healthData, err) {
       var value = d3.select(this).attr("value");
       if (value !== chosenYAxis) {
 
-        // replaces chosenXAxis with value
+        // replaces chosenYAxis with value
         chosenYAxis = value;
 
         // functions here found above csv import
-        // updates x scale for new data
+        // updates y scale for new data
         yLinearScale = yScale(healthData, chosenYAxis);
 
-        // updates x axis with transition
+        // updates y axis with transition
         yAxis = renderYAxes(yLinearScale, yAxis);
 
-        // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, yLinearScale, xLinearScale, chosenYAxis, chosenXAxis);
+        // updates circles with new y values
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 
         // updates tooltips with new info
-        circlesGroup = updateToolTip(chosenYAxis, chosenXAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
         // changes classes to change bold text
         if (chosenYAxis === "smokes") {
