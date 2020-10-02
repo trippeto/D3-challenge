@@ -87,6 +87,16 @@ function renderCircles(circlesGroup, newXScale, newYScale, chosenXAxis, chosenYA
   return circlesGroup;
 };
 
+function renderCircleText(circleTextGroup, newXScale, newYScale, chosenXAxis, chosenYAxis) {
+
+  circleTextGroup.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[chosenXAxis]))
+    .attr("y", d => newYScale(d[chosenYAxis]));
+
+  return circleTextGroup;
+}
+
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
@@ -177,8 +187,18 @@ d3.csv("./assets/data/data.csv").then(function(healthData, err) {
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d[chosenYAxis]))
-    .attr("r", 8)
+    .attr("r", 12)
     .classed("stateCircle", true);
+
+  var circleTextGroup = chartGroup.selectAll()
+    .data(healthData)
+    .enter()
+    .append("text")
+    .attr("x", d => xLinearScale(d[chosenXAxis]))
+    .attr("y", d => yLinearScale(d[chosenYAxis]))
+    .attr("dy", ".35em")
+    .text(d => d.abbr)
+    .classed("stateText", true);
 
   // Create group for multiple x-axis labels
   var xLabelsGroup = chartGroup.append("g")
@@ -265,6 +285,8 @@ d3.csv("./assets/data/data.csv").then(function(healthData, err) {
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
 
+        circleTextGroup = renderCircleText(circleTextGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
+
         // changes classes to change bold text
         if (chosenXAxis === "age") {
           ageLabel
@@ -324,6 +346,8 @@ d3.csv("./assets/data/data.csv").then(function(healthData, err) {
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, chosenYAxis, circlesGroup);
+
+        circleTextGroup = renderCircleText(circleTextGroup, xLinearScale, yLinearScale, chosenXAxis, chosenYAxis);
 
         // changes classes to change bold text
         if (chosenYAxis === "smokes") {
